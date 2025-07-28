@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Employés - DKM Customs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .font-inter { font-family: 'Inter', sans-serif; }
+      
+      .navigation-sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        z-index: 1000;
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+        padding: 0 2rem;
+        margin-bottom: 3rem;
+      }
+      
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 12px;
+      }
+      
+      .logo-text {
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+      
+      .nav-item {
+        margin-bottom: 0.5rem;
+      }
+      
+      .nav-item a {
+        display: flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-item.active a,
+      .nav-item a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      
+      .nav-icon {
+        margin-right: 12px;
+        font-size: 1.2rem;
+      }
+      
+      .main-content {
+        margin-left: 250px;
+        min-height: 100vh;
+      }
+      
+      .top-navigation {
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .title {
+        display: flex;
+        align-items: center;
+      }
+      
+      .menu-button {
+        display: none;
+        margin-right: 1rem;
+        padding: 0.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+      
+      .title h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .notification-button {
+        padding: 0.5rem;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: #6b7280;
+      }
+      
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+      
+      .content-area {
+        padding: 2rem;
+      }
+      
+      .employee-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      
+      .employee-header {
+        padding: 1.5rem 2rem;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      
+      .employee-header h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .employee-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      
+      .search-bar {
+        padding: 0.5rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      
+      .search-bar:focus {
+        border-color: #667eea;
+      }
+      
+      .add-employee-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: transform 0.2s ease;
+      }
+      
+      .add-employee-button:hover {
+        transform: translateY(-1px);
+      }
+      
+      .employee-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      .employee-table th {
+        background: #f9fafb;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      
+      .employee-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      
+      .employee-table tr:hover {
+        background: #f9fafb;
+      }
+      
+      .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .edit-btn, .delete-btn {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.2s ease;
+      }
+      
+      .edit-btn {
+        background: #3b82f6;
+        color: white;
+      }
+      
+      .edit-btn:hover {
+        background: #2563eb;
+      }
+      
+      .delete-btn {
+        background: #ef4444;
+        color: white;
+      }
+      
+      .delete-btn:hover {
+        background: #dc2626;
+      }
+      
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #6b7280;
+      }
+      
+      .error {
+        background: #fef2f2;
+        color: #dc2626;
+        padding: 1rem;
+        border-radius: 6px;
+        margin: 1rem;
+      }
+      
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+      }
+      
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 2rem;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 500px;
+      }
+      
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+      
+      .modal-header h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+      }
+      
+      .close {
+        color: #6b7280;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      
+      .close:hover {
+        color: #374151;
+      }
+      
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #374151;
+      }
+      
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      
+      .form-group input:focus {
+        border-color: #667eea;
+      }
+      
+      .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+      }
+      
+      .btn-cancel, .btn-save {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      
+      .btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+      }
+      
+      .btn-cancel:hover {
+        background: #e5e7eb;
+      }
+      
+      .btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      
+      .btn-save:hover {
+        transform: translateY(-1px);
+      }
+      
+      @media (max-width: 768px) {
+        .navigation-sidebar {
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+        }
+        
+        .navigation-sidebar.active {
+          transform: translateX(0);
+        }
+        
+        .main-content {
+          margin-left: 0;
+        }
+        
+        .menu-button {
+          display: block;
+        }
+        
+        .employee-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .employee-actions {
+          flex-direction: column;
+        }
+        
+        .employee-table {
+          font-size: 0.875rem;
+        }
+        
+        .modal-content {
+          margin: 10% auto;
+          width: 95%;
+        }
+      }
+    </style>
+  </head>
+  <body class="font-inter bg-gray-50 text-gray-900 min-h-screen">
+    <!-- Navigation Sidebar -->
+    <div class="navigation-sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">DK</div>
+        <span class="logo-text">DKM Customs</span>
+      </div>
+      <nav>
+        <div class="nav-item">
+          <a href="DKM_certifications.html">
+            <span class="nav-icon">📄</span>
+            <span>Certificats</span>
+          </a>
+        </div>
+        <div class="nav-item active">
+          <a href="employes.html">
+            <span class="nav-icon">👥</span>
+            <span>Employés</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Top Navigation -->
+      <header class="top-navigation">
+        <div class="title">
+          <button class="menu-button" onclick="toggleSidebar()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <h1>Liste des Employés</h1>
+        </div>
+        <div class="user-actions">
+          <button class="notification-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+              />
+            </svg>
+          </button>
+          <div class="user-avatar">AD</div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <main class="content-area">
+        <div class="employee-section">
+          <div class="employee-header">
+            <h2>Liste des Employés</h2>
+            <div class="employee-actions">
+              <input
+                type="text"
+                class="search-bar"
+                placeholder="Rechercher..."
+                id="searchInput"
+                onkeyup="searchEmployees()"
+              />
+              <button class="add-employee-button" onclick="openModal()">
+                Ajouter un employé
+              </button>
+            </div>
+          </div>
+          <div class="loading" id="loadingMessage">Chargement des employés...</div>
+          <div class="error" id="errorMessage" style="display: none;"></div>
+          <table class="employee-table" id="employeeTable" style="display: none;">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Date de Naissance</th>
+                <th>Poste</th>
+                <th>Date d'Embauche</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+              <!-- Employee data will be dynamically inserted here -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalTitle">Ajouter un employé</h3>
+          <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <form id="employeeForm">
+          <div class="form-group">
+            <label for="employeeName">Nom complet:</label>
+            <input type="text" id="employeeName" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="employeeBirthDate">Date de naissance:</label>
+            <input type="date" id="employeeBirthDate" name="birthDate" required>
+          </div>
+          <div class="form-group">
+            <label for="employeePosition">Poste:</label>
+            <input type="text" id="employeePosition" name="position" required>
+          </div>
+          <div class="form-group">
+            <label for="employeeHireDate">Date d'embauche:</label>
+            <input type="date" id="employeeHireDate" name="hireDate" required>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+            <button type="submit" class="btn-save">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Airtable Configuration
+      const AIRTABLE_API_KEY = 'patPBteF5BzJZyQR8.172c95ec558c7ed97a291c11ab236d4e518147d58742539d7d2806724b98b900';
+      const BASE_ID = 'appf4tr0h9oso2roZ';
+      const TABLE_NAME = 'Employees'; // You can change this to match your table name
+      
+      let employees = [];
+      let currentEmployeeId = null;
+
+      // Airtable API wrapper functions
+      const AirtableAPI = {
+        baseUrl: `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`,
+        
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+
+        async getAll() {
+          try {
+            const response = await fetch(this.baseUrl, {
+              headers: this.headers
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.records;
+          } catch (error) {
+            console.error('Error fetching employees:', error);
+            throw error;
+          }
+        },
+
+        async create(fields) {
+          try {
+            const response = await fetch(this.baseUrl, {
+              method: 'POST',
+              headers: this.headers,
+              body: JSON.stringify({
+                fields: fields
+              })
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error('Error creating employee:', error);
+            throw error;
+          }
+        },
+
+        async update(recordId, fields) {
+          try {
+            const response = await fetch(`${this.baseUrl}/${recordId}`, {
+              method: 'PATCH',
+              headers: this.headers,
+              body: JSON.stringify({
+                fields: fields
+              })
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error('Error updating employee:', error);
+            throw error;
+          }
+        },
+
+        async delete(recordId) {
+          try {
+            const response = await fetch(`${this.baseUrl}/${recordId}`, {
+              method: 'DELETE',
+              headers: this.headers
+            });
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return true;
+          } catch (error) {
+            console.error('Error deleting employee:', error);
+            throw error;
+          }
+        }
+      };
+
+      // Initialize the application
+      async function initializeApp() {
+        try {
+          await loadEmployees();
+        } catch (error) {
+          showError('Erreur lors du chargement des employés. Vérifiez votre connexion et vos clés API.');
+        }
+      }
+
+      // Load employees from Airtable
+      async function loadEmployees() {
+        try {
+          document.getElementById('loadingMessage').style.display = 'block';
+          document.getElementById('employeeTable').style.display = 'none';
+          document.getElementById('errorMessage').style.display = 'none';
+
+          const records = await AirtableAPI.getAll();
+          employees = records.map(record => ({
+            id: record.id,
+            name: record.fields.Name || record.fields.Nom || '',
+            birthDate: record.fields.BirthDate || record.fields['Date de Naissance'] || '',
+            position: record.fields.Position || record.fields.Poste || '',
+            hireDate: record.fields.HireDate || record.fields["Date d'Embauche"] || ''
+          }));
+
+          renderEmployeeTable();
+          document.getElementById('loadingMessage').style.display = 'none';
+          document.getElementById('employeeTable').style.display = 'table';
+        } catch (error) {
+          document.getElementById('loadingMessage').style.display = 'none';
+          showError('Erreur lors du chargement des employés: ' + error.message);
+        }
+      }
+
+      // Render the employee table
+      function renderEmployeeTable() {
+        const tbody = document.getElementById('employeeTableBody');
+        tbody.innerHTML = '';
+
+        if (employees.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #6b7280;">Aucun employé trouvé</td></tr>';
+          return;
+        }
+
+        employees.forEach(employee => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${employee.name}</td>
+            <td>${formatDate(employee.birthDate)}</td>
+            <td>${employee.position}</td>
+            <td>${formatDate(employee.hireDate)}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="edit-btn" onclick="editEmployee('${employee.id}')">Modifier</button>
+                <button class="delete-btn" onclick="deleteEmployee('${employee.id}')">Supprimer</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Format date for display
+      function formatDate(dateString) {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('fr-FR');
+      }
+
+      // Search employees
+      function searchEmployees() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filteredEmployees = employees.filter(employee =>
+          employee.name.toLowerCase().includes(searchTerm) ||
+          employee.position.toLowerCase().includes(searchTerm)
+        );
+
+        const tbody = document.getElementById('employeeTableBody');
+        tbody.innerHTML = '';
+
+        filteredEmployees.forEach(employee => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${employee.name}</td>
+            <td>${formatDate(employee.birthDate)}</td>
+            <td>${employee.position}</td>
+            <td>${formatDate(employee.hireDate)}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="edit-btn" onclick="editEmployee('${employee.id}')">Modifier</button>
+                <button class="delete-btn" onclick="deleteEmployee('${employee.id}')">Supprimer</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
+      }
+
+      // Modal functions
+      function openModal(employeeId = null) {
+        currentEmployeeId = employeeId;
+        const modal = document.getElementById('employeeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const form = document.getElementById('employeeForm');
+
+        if (employeeId) {
+          // Edit mode
+          modalTitle.textContent = 'Modifier l\'employé';
+          const employee = employees.find(emp => emp.id === employeeId);
+          if (employee) {
+            document.getElementById('employeeName').value = employee.name;
+            document.getElementById('employeeBirthDate').value = employee.birthDate;
+            document.getElementById('employeePosition').value = employee.position;
+            document.getElementById('employeeHireDate').value = employee.hireDate;
+          }
+        } else {
+          // Add mode
+          modalTitle.textContent = 'Ajouter un employé';
+          form.reset();
+        }
+
+        modal.style.display = 'block';
+      }
+
+      function closeModal() {
+        document.getElementById('employeeModal').style.display = 'none';
+        currentEmployeeId = null;
+        document.getElementById('employeeForm').reset();
+      }
+
+      // Handle form submission
+      document.getElementById('employeeForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const employeeData = {
+          Name: formData.get('name'),
+          BirthDate: formData.get('birthDate'),
+          Position: formData.get('position'),
+          HireDate: formData.get('hireDate')
+        };
+
+        try {
+          if (currentEmployeeId) {
+            // Update existing employee
+            await AirtableAPI.update(currentEmployeeId, employeeData);
+          } else {
+            // Create new employee
+            await AirtableAPI.create(employeeData);
+          }
+
+          closeModal();
+          await loadEmployees();
+        } catch (error) {
+          showError('Erreur lors de l\'enregistrement: ' + error.message);
+        }
+      });
+
+      // Edit employee
+      function editEmployee(employeeId) {
+        openModal(employeeId);
+      }
+
+      // Delete employee
+      async function deleteEmployee(employeeId) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
+          try {
+            await AirtableAPI.delete(employeeId);
+            await loadEmployees();
+          } catch (error) {
+            showError('Erreur lors de la suppression: ' + error.message);
+          }
+        }
+      }
+
+      // Show error message
+      function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+      }
+
+      // Toggle sidebar for mobile
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.classList.toggle('active');
+      }
+
+      // Close modal when clicking outside
+      window.onclick = function(event) {
+        const modal = document.getElementById('employeeModal');
+        if (event.target === modal) {
+          closeModal();
+        }
+      }
+
+      // Initialize the app when the page loads
+      document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+  </body>
+</html>
