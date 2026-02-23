@@ -1,4 +1,6 @@
 {
-    "rewrites": [{ "source": "/", "destination": "/DKM_certifications.html" }]
-  }
-  
+  "buildCommand": "node generate-config.js",
+  "outputDirectory": ".",
+  "installCommand": "",
+  "rewrites": [{ "source": "/", "destination": "/DKM_certifications.html" }]
+}
