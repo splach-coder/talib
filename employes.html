@@ -3,903 +3,627 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Liste des Employés - DKM Customs</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      .font-inter {
-        font-family: "Inter", sans-serif;
-      }
-
-      .navigation-sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 250px;
-        height: 100vh;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem 0;
-        z-index: 1000;
-      }
-
-      .logo {
-        display: flex;
-        align-items: center;
-        padding: 0 2rem;
-        margin-bottom: 3rem;
-      }
-
-      .logo-icon {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        margin-right: 12px;
-      }
-
-      .logo-text {
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-
-      .nav-item {
-        margin-bottom: 0.5rem;
-      }
-
-      .nav-item a {
-        display: flex;
-        align-items: center;
-        padding: 1rem 2rem;
-        color: rgba(255, 255, 255, 0.8);
-        text-decoration: none;
-        transition: all 0.3s ease;
-      }
-
-      .nav-item.active a,
-      .nav-item a:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-      }
-
-      .nav-icon {
-        margin-right: 12px;
-        font-size: 1.2rem;
-      }
-
-      .main-content {
-        margin-left: 250px;
-        min-height: 100vh;
-      }
-
-      .top-navigation {
-        background: white;
-        border-bottom: 1px solid #e5e7eb;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .title {
-        display: flex;
-        align-items: center;
-      }
-
-      .menu-button {
-        display: none;
-        margin-right: 1rem;
-        padding: 0.5rem;
-        border: none;
-        background: none;
-        cursor: pointer;
-      }
-
-      .title h1 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #1f2937;
-      }
-
-      .user-actions {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .notification-button {
-        padding: 0.5rem;
-        border: none;
-        background: none;
-        cursor: pointer;
-        color: #6b7280;
-      }
-
-      .user-avatar {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 0.875rem;
-      }
-
-      .content-area {
-        padding: 2rem;
-      }
-
-      .employee-section {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-      }
-
-      .employee-header {
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid #e5e7eb;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-
-      .employee-header h2 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1f2937;
-      }
-
-      .employee-actions {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-      }
-
-      .search-bar {
-        padding: 0.5rem 1rem;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        outline: none;
-        transition: border-color 0.3s ease;
-      }
-
-      .search-bar:focus {
-        border-color: #667eea;
-      }
-
-      .add-employee-button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 0.5rem 1rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: transform 0.2s ease;
-      }
-
-      .add-employee-button:hover {
-        transform: translateY(-1px);
-      }
-
-      .employee-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      .employee-table th {
-        background: #f9fafb;
-        padding: 1rem;
-        text-align: left;
-        font-weight: 600;
-        color: #374151;
-        border-bottom: 1px solid #e5e7eb;
-      }
-
-      .employee-table td {
-        padding: 1rem;
-        border-bottom: 1px solid #f3f4f6;
-      }
-
-      .employee-table tr:hover {
-        background: #f9fafb;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 0.5rem;
-      }
-
-      .edit-btn,
-      .delete-btn {
-        padding: 0.25rem 0.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.875rem;
-        transition: all 0.2s ease;
-      }
-
-      .edit-btn {
-        background: #3b82f6;
-        color: white;
-      }
-
-      .edit-btn:hover {
-        background: #2563eb;
-      }
-
-      .delete-btn {
-        background: #ef4444;
-        color: white;
-      }
-
-      .delete-btn:hover {
-        background: #dc2626;
-      }
-
-      .loading {
-        text-align: center;
-        padding: 2rem;
-        color: #6b7280;
-      }
-
-      .error {
-        background: #fef2f2;
-        color: #dc2626;
-        padding: 1rem;
-        border-radius: 6px;
-        margin: 1rem;
-      }
-
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-
-      .modal-content {
-        background-color: white;
-        margin: 5% auto;
-        padding: 2rem;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 500px;
-      }
-
-      .modal-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-      }
-
-      .modal-header h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1f2937;
-      }
-
-      .close {
-        color: #6b7280;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .close:hover {
-        color: #374151;
-      }
-
-      .form-group {
-        margin-bottom: 1rem;
-      }
-
-      .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: #374151;
-      }
-
-      .form-group input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        outline: none;
-        transition: border-color 0.3s ease;
-      }
-
-      .form-group input:focus {
-        border-color: #667eea;
-      }
-
-      .form-actions {
-        display: flex;
-        gap: 1rem;
-        justify-content: flex-end;
-        margin-top: 1.5rem;
-      }
-
-      .btn-cancel,
-      .btn-save {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s ease;
-      }
-
-      .btn-cancel {
-        background: #f3f4f6;
-        color: #374151;
-      }
-
-      .btn-cancel:hover {
-        background: #e5e7eb;
-      }
-
-      .btn-save {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-      }
-
-      .btn-save:hover {
-        transform: translateY(-1px);
-      }
-
-      @media (max-width: 768px) {
-        .navigation-sidebar {
-          transform: translateX(-100%);
-          transition: transform 0.3s ease;
-        }
-
-        .navigation-sidebar.active {
-          transform: translateX(0);
-        }
-
-        .main-content {
-          margin-left: 0;
-        }
-
-        .menu-button {
-          display: block;
-        }
-
-        .employee-header {
-          flex-direction: column;
-          align-items: stretch;
-        }
-
-        .employee-actions {
-          flex-direction: column;
-        }
-
-        .employee-table {
-          font-size: 0.875rem;
-        }
-
-        .modal-content {
-          margin: 10% auto;
-          width: 95%;
-        }
-      }
-    </style>
+    <title>Employés — DKM Customs</title>
+    <meta name="description" content="Liste et gestion des employés DKM Customs" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="config.js"></script>
   </head>
-  <body class="font-inter bg-gray-50 text-gray-900 min-h-screen">
-    <!-- Navigation Sidebar -->
-    <div class="navigation-sidebar" id="sidebar">
-      <div class="logo">
-        <div class="logo-icon">DKM</div>
-        <span class="logo-text">DKM Customs</span>
-      </div>
-      <nav>
-        <div class="nav-item">
-          <a href="DKM_certifications.html">
-            <span class="nav-icon">📄</span>
-            <span>Certificats</span>
-          </a>
-        </div>
-        <div class="nav-item active">
-          <a href="employes.html">
-            <span class="nav-icon">👥</span>
-            <span>Employés</span>
-          </a>
-        </div>
-      </nav>
-    </div>
+  <body>
 
-    <!-- Main Content -->
-    <div class="main-content">
-      <!-- Top Navigation -->
-      <header class="top-navigation">
-        <div class="title">
-          <button class="menu-button" onclick="toggleSidebar()">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Header: brand + collapse button always visible -->
+      <div class="sidebar-header">
+        <a class="sidebar-brand" href="#">
+          <img src="images/DKM-Logo.png" alt="DKM Logo" style="width:26px;height:26px;object-fit:contain;flex-shrink:0;" />
+          <span class="sidebar-brand-text">
+            <span class="sidebar-brand-name">DKM Customs</span>
+            <span class="sidebar-brand-tag">Administration</span>
+          </span>
+        </a>
+        <button class="sidebar-collapse-top" id="collapseBtn" title="Réduire">
+          &#9664;
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-label">Navigation</span>
+
+        <a href="employes.html" class="nav-item active">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Employés</span>
+        </a>
+
+        <a href="DKM_certifications.html" class="nav-item">
+          <span class="nav-icon">📜</span>
+          <span class="nav-label">Attestations</span>
+        </a>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ═══════════ MAIN ═══════════ -->
+    <div class="main-wrapper" id="mainWrapper">
+
+      <!-- TOP BAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </button>
-          <h1>Liste des Employés</h1>
+          <div>
+            <div class="topbar-title">Employés</div>
+            <div class="topbar-breadcrumb">
+              DKM Customs <span class="sep">›</span> <span>Liste des Employés</span>
+            </div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <a href="DKM_certifications.html" class="topbar-btn" title="Attestations">📜</a>
         </div>
       </header>
 
-      <!-- Content Area -->
-      <main class="content-area">
-        <div class="employee-section">
-          <div class="employee-header">
-            <h2>Liste des Employés</h2>
-            <div class="employee-actions">
-              <input
-                type="text"
-                class="search-bar"
-                placeholder="Rechercher..."
-                id="searchInput"
-                onkeyup="searchEmployees()"
-              />
-              <button class="add-employee-button" onclick="openModal()">
-                Ajouter un employé
-              </button>
+      <!-- PAGE CONTENT -->
+      <main class="page-content">
+
+        <!-- Page header -->
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h1 class="page-header-title">Gestion des Employés</h1>
+            <p class="page-header-subtitle">Consultez, ajoutez, modifiez et supprimez les employés de votre organisation.</p>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="openModal()">
+            ＋ Ajouter un employé
+          </button>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row" id="statsRow" style="margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-icon brand">👥</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statTotal">—</div>
+              <div class="stat-label">Total employés</div>
             </div>
           </div>
-          <div class="loading" id="loadingMessage">
-            Chargement des employés...
+          <div class="stat-card">
+            <div class="stat-icon success">✅</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCDI">—</div>
+              <div class="stat-label">CDI</div>
+            </div>
           </div>
-          <div class="error" id="errorMessage" style="display: none"></div>
-          <table
-            class="employee-table"
-            id="employeeTable"
-            style="display: none"
-          >
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Date de Naissance</th>
-                <th>Poste</th>
-                <th>Date d'Embauche</th>
-                <th>Adresse</th>
-                <th>Type de Contrat</th>
-                <th>Numéro d'Identité</th>
-                <th>Numéro de Sécurité Sociale</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="employeeTableBody">
-              <!-- Employee data will be dynamically inserted here -->
-            </tbody>
-          </table>
+          <div class="stat-card">
+            <div class="stat-icon warning">⏱️</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCDD">—</div>
+              <div class="stat-label">CDD</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon info">📋</div>
+            <div class="stat-body">
+              <div class="stat-value" id="statOther">—</div>
+              <div class="stat-label">Autre</div>
+            </div>
+          </div>
         </div>
+
+        <!-- Main data card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              Liste des Employés
+              <span class="card-title-badge" id="countBadge">0</span>
+            </div>
+            <div class="card-actions">
+              <!-- Search -->
+              <div class="search-wrapper">
+                <span class="search-icon-inline">🔍</span>
+                <input
+                  type="text"
+                  class="search-input"
+                  id="searchInput"
+                  placeholder="Rechercher un employé..."
+                  oninput="applyFilters()"
+                />
+              </div>
+              <!-- Filter by contract -->
+              <select class="filter-select" id="contractFilter" onchange="applyFilters()">
+                <option value="">Tous les contrats</option>
+                <option value="CDI">CDI</option>
+                <option value="CDD">CDD</option>
+              </select>
+              <!-- Sort -->
+              <select class="filter-select" id="sortSelect" onchange="applyFilters()">
+                <option value="name">Nom A–Z</option>
+                <option value="nameDesc">Nom Z–A</option>
+                <option value="hireDate">+ Récent</option>
+                <option value="hireDateAsc">+ Ancien</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <!-- Loading skeleton -->
+            <div id="loadingState" style="padding:32px;text-align:center;color:var(--gray-400);">
+              <div style="font-size:32px;margin-bottom:12px;">⏳</div>
+              <div style="font-weight:600;color:var(--gray-500);">Chargement des employés...</div>
+            </div>
+
+            <!-- Error state -->
+            <div id="errorState" style="display:none;padding:24px;">
+              <div class="info-box warning">
+                <div class="info-box-icon">⚠️</div>
+                <div>
+                  <div class="info-box-title">Erreur de connexion</div>
+                  <div class="info-box-text" id="errorMsg">Vérifiez votre connexion et vos clés API Airtable.</div>
+                </div>
+              </div>
+            </div>
+
+            <table class="data-table" id="employeeTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th class="sortable" onclick="sortBy('name')" id="th-name">Nom</th>
+                  <th class="sortable" onclick="sortBy('birthDate')" id="th-birthDate">Naissance</th>
+                  <th class="sortable" onclick="sortBy('position')" id="th-position">Poste</th>
+                  <th class="sortable" onclick="sortBy('hireDate')" id="th-hireDate">Embauche</th>
+                  <th>Adresse</th>
+                  <th>Contrat</th>
+                  <th>CIN</th>
+                  <th>N° SS</th>
+                  <th style="text-align:center;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="employeeTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="table-pagination" id="paginationBar" style="display:none;">
+            <div class="pagination-info" id="paginationInfo">Affichage de 0 résultats</div>
+            <div class="pagination-controls" id="paginationControls"></div>
+          </div>
+        </div>
+
       </main>
     </div>
 
-    <!-- Employee Modal -->
-    <div id="employeeModal" class="modal">
-      <div class="modal-content">
+    <!-- ═══════════ EMPLOYEE MODAL ═══════════ -->
+    <div class="modal-overlay" id="employeeModal">
+      <div class="modal-box" style="max-width:580px;">
+
         <div class="modal-header">
-          <h3 id="modalTitle">Ajouter un employé</h3>
-          <span class="close" onclick="closeModal()">&times;</span>
+          <div class="modal-header-title" id="modalTitle">Ajouter un employé</div>
+          <div class="modal-header-sub">Remplissez les informations ci-dessous</div>
+          <button class="modal-close-btn" onclick="closeModal()">✕</button>
         </div>
-        <form id="employeeForm">
-          <div class="form-group">
-            <label for="employeeName">Nom complet :</label>
-            <input type="text" id="employeeName" name="name" required />
-          </div>
 
-          <div class="form-group">
-            <label for="employeeBirthDate">Date de naissance :</label>
-            <input
-              type="date"
-              id="employeeBirthDate"
-              name="birthDate"
-              required
-            />
-          </div>
+        <div class="modal-body">
+          <form id="employeeForm">
+            <div class="form-grid">
 
-          <div class="form-group">
-            <label for="employeePosition">Poste :</label>
-            <input type="text" id="employeePosition" name="position" required />
-          </div>
+              <div class="form-group">
+                <label class="form-label" for="employeeName">Nom complet <span>*</span></label>
+                <input class="form-control" type="text" id="employeeName" name="Name" placeholder="Ex: Youssef Benali" required />
+              </div>
 
-          <div class="form-group">
-            <label for="employeeHireDate">Date d'embauche :</label>
-            <input type="date" id="employeeHireDate" name="hireDate" required />
-          </div>
+              <div class="form-group">
+                <label class="form-label" for="employeeBirthDate">Date de naissance <span>*</span></label>
+                <input class="form-control" type="date" id="employeeBirthDate" name="BirthDate" required />
+              </div>
 
-          <div class="form-group">
-            <label for="employeeAddress">Adresse :</label>
-            <input type="text" id="employeeAddress" name="address" required />
-          </div>
+              <div class="form-group">
+                <label class="form-label" for="employeePosition">Poste <span>*</span></label>
+                <input class="form-control" type="text" id="employeePosition" name="Position" placeholder="Ex: Responsable logistique" required />
+              </div>
 
-          <div class="form-group">
-            <label for="contractType">Type de contrat :</label>
-            <input type="text" id="contractType" name="contractType" required />
-          </div>
+              <div class="form-group">
+                <label class="form-label" for="employeeHireDate">Date d'embauche <span>*</span></label>
+                <input class="form-control" type="date" id="employeeHireDate" name="HireDate" required />
+              </div>
 
-          <div class="form-group">
-            <label for="nationalId">Numéro d'identité nationale :</label>
-            <input type="text" id="nationalId" name="nationalId" required />
-          </div>
+              <div class="form-group col-span-full">
+                <label class="form-label" for="employeeAddress">Adresse</label>
+                <input class="form-control" type="text" id="employeeAddress" name="Address" placeholder="Ex: 12 Rue Mohammed V, Marrakech" />
+              </div>
 
-          <div class="form-group">
-            <label for="socialSecurity">Numéro de sécurité sociale :</label>
-            <input
-              type="text"
-              id="socialSecurity"
-              name="socialSecurity"
-              required
-            />
-          </div>
+              <div class="form-group">
+                <label class="form-label" for="contractType">Type de contrat</label>
+                <select class="form-control filter-select" id="contractType" name="Contract type" style="padding:9px 14px;background-size:16px;">
+                  <option value="CDI">CDI</option>
+                  <option value="CDD">CDD</option>
+                  <option value="Intérim">Intérim</option>
+                  <option value="Freelance">Freelance</option>
+                </select>
+              </div>
 
-          <div class="form-actions">
-            <button type="button" class="btn-cancel" onclick="closeModal()">
-              Annuler
-            </button>
-            <button type="submit" class="btn-save">Enregistrer</button>
-          </div>
-        </form>
+              <div class="form-group">
+                <label class="form-label" for="nationalId">CIN (Carte Nationale)</label>
+                <input class="form-control" type="text" id="nationalId" name="National ID" placeholder="Ex: AB123456" />
+              </div>
+
+              <div class="form-group col-span-full">
+                <label class="form-label" for="socialSecurity">N° Sécurité Sociale</label>
+                <input class="form-control" type="text" id="socialSecurity" name="Social security number" placeholder="Ex: 00233173900024" />
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+          <button class="btn btn-primary" id="saveBtn" onclick="saveEmployee()">
+            💾 Enregistrer
+          </button>
+        </div>
+
       </div>
     </div>
 
+    <!-- Delete confirm modal -->
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal-box" style="max-width:420px;">
+        <div class="modal-header" style="background:linear-gradient(135deg,#EF4444,#DC2626);">
+          <div class="modal-header-title">Confirmer la suppression</div>
+          <div class="modal-header-sub">Cette action est irréversible</div>
+          <button class="modal-close-btn" onclick="document.getElementById('deleteModal').classList.remove('active')">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="info-box warning">
+            <div class="info-box-icon">⚠️</div>
+            <div>
+              <div class="info-box-title">Êtes-vous certain ?</div>
+              <div class="info-box-text">L'employé <strong id="deleteEmpName"></strong> sera définitivement supprimé de la base de données.</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="document.getElementById('deleteModal').classList.remove('active')">Annuler</button>
+          <button class="btn btn-danger" id="confirmDeleteBtn">🗑 Supprimer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-box">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Sauvegarde...</div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-      // Airtable Configuration
-      const AIRTABLE_API_KEY =
-        "patPBteF5BzJZyQR8.172c95ec558c7ed97a291c11ab236d4e518147d58742539d7d2806724b98b900";
-      const BASE_ID = "appf4tr0h9oso2roZ";
-      const TABLE_NAME = "Employees"; // You can change this to match your table name
+      // ─── Config (loaded from config.js) ───
+      const AIRTABLE_API_KEY = window.DKM_CONFIG.AIRTABLE_API_KEY;
+      const BASE_ID          = window.DKM_CONFIG.BASE_ID;
+      const TABLE_NAME       = window.DKM_CONFIG.TABLE_NAME;
+      const BASE_URL         = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`;
+      const HEADERS          = { "Authorization": `Bearer ${AIRTABLE_API_KEY}`, "Content-Type": "application/json" };
 
-      let employees = [];
+      // ─── State ───
+      let employees         = [];
+      let filteredEmployees = [];
+      let currentPage       = 1;
+      const PAGE_SIZE       = 15;
       let currentEmployeeId = null;
+      let sortField         = "name";
+      let sortDir           = "asc";
 
-      // Airtable API wrapper functions
-      const AirtableAPI = {
-        baseUrl: `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`,
+      // ─── Init ───
+      window.addEventListener("DOMContentLoaded", loadEmployees);
 
-        headers: {
-          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-
-        async getAll() {
-          try {
-            const response = await fetch(this.baseUrl, {
-              headers: this.headers,
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            return data.records;
-          } catch (error) {
-            console.error("Error fetching employees:", error);
-            throw error;
-          }
-        },
-
-        async create(fields) {
-          try {
-            const response = await fetch(this.baseUrl, {
-              method: "POST",
-              headers: this.headers,
-              body: JSON.stringify({
-                fields: fields,
-              }),
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-          } catch (error) {
-            console.error("Error creating employee:", error);
-            throw error;
-          }
-        },
-
-        async update(recordId, fields) {
-          try {
-            const response = await fetch(`${this.baseUrl}/${recordId}`, {
-              method: "PATCH",
-              headers: this.headers,
-              body: JSON.stringify({
-                fields: fields,
-              }),
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-          } catch (error) {
-            console.error("Error updating employee:", error);
-            throw error;
-          }
-        },
-
-        async delete(recordId) {
-          try {
-            const response = await fetch(`${this.baseUrl}/${recordId}`, {
-              method: "DELETE",
-              headers: this.headers,
-            });
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return true;
-          } catch (error) {
-            console.error("Error deleting employee:", error);
-            throw error;
-          }
-        },
-      };
-
-      // Initialize the application
-      async function initializeApp() {
-        try {
-          await loadEmployees();
-        } catch (error) {
-          showError(
-            "Erreur lors du chargement des employés. Vérifiez votre connexion et vos clés API."
-          );
-        }
+      // ─── API ───
+      async function request(url, opts = {}) {
+        const r = await fetch(url, { headers: HEADERS, ...opts });
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
       }
 
-      // Load employees from Airtable
       async function loadEmployees() {
         try {
-          document.getElementById("loadingMessage").style.display = "block";
+          document.getElementById("loadingState").style.display  = "block";
           document.getElementById("employeeTable").style.display = "none";
-          document.getElementById("errorMessage").style.display = "none";
+          document.getElementById("errorState").style.display    = "none";
+          document.getElementById("paginationBar").style.display = "none";
 
-          const records = await AirtableAPI.getAll();
-          employees = records.map((record) => ({
-            id: record.id,
-            name: record.fields.Name,
-            birthDate: record.fields.BirthDate,
-            position: record.fields.Position,
-            hireDate: record.fields.HireDate,
-            address: record.fields.Address || "",
-            contractType: record.fields["Contract type"] || "",
-            nationalId: record.fields["National ID"] || "",
-            socialSecurity: record.fields["Social security number"] || "",
+          const data = await request(`${BASE_URL}?pageSize=100`);
+          employees  = (data.records || []).map(r => ({
+            id:             r.id,
+            name:           r.fields.Name || r.fields["Full Name"] || "—",
+            birthDate:      r.fields.BirthDate || "",
+            position:       r.fields.Position  || "—",
+            hireDate:       r.fields.HireDate  || "",
+            address:        r.fields.Address   || "",
+            contractType:   r.fields["Contract type"] || "",
+            nationalId:     r.fields["National ID"]   || "",
+            socialSecurity: r.fields["Social security number"] || ""
           }));
 
-          renderEmployeeTable();
-          document.getElementById("loadingMessage").style.display = "none";
+          updateStats();
+          applyFilters();
+          document.getElementById("loadingState").style.display  = "none";
           document.getElementById("employeeTable").style.display = "table";
-        } catch (error) {
-          document.getElementById("loadingMessage").style.display = "none";
-          showError("Erreur lors du chargement des employés: " + error.message);
+          document.getElementById("paginationBar").style.display = "flex";
+
+        } catch(e) {
+          document.getElementById("loadingState").style.display = "none";
+          document.getElementById("errorState").style.display   = "block";
+          document.getElementById("errorMsg").textContent       = e.message;
         }
       }
 
-      // Render the employee table
-      function renderEmployeeTable() {
-        const tbody = document.getElementById("employeeTableBody");
-        tbody.innerHTML = "";
+      // ─── Stats ───
+      function updateStats() {
+        const cdi   = employees.filter(e => e.contractType.toUpperCase() === "CDI").length;
+        const cdd   = employees.filter(e => e.contractType.toUpperCase() === "CDD").length;
+        const other = employees.length - cdi - cdd;
+        document.getElementById("statTotal").textContent = employees.length;
+        document.getElementById("statCDI").textContent   = cdi;
+        document.getElementById("statCDD").textContent   = cdd;
+        document.getElementById("statOther").textContent = other;
+      }
 
-        if (employees.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #6b7280;">Aucun employé trouvé</td></tr>';
+      // ─── Filters & Sort ───
+      function applyFilters() {
+        const q        = document.getElementById("searchInput").value.toLowerCase();
+        const contract = document.getElementById("contractFilter").value;
+        const sort     = document.getElementById("sortSelect").value;
+
+        filteredEmployees = employees
+          .filter(e =>
+            (!q || e.name.toLowerCase().includes(q) || e.position.toLowerCase().includes(q) || e.nationalId.toLowerCase().includes(q)) &&
+            (!contract || e.contractType === contract)
+          )
+          .sort((a, b) => {
+            let va, vb;
+            if (sort === "name")        { va = a.name;     vb = b.name;     return va.localeCompare(vb); }
+            if (sort === "nameDesc")    { va = a.name;     vb = b.name;     return vb.localeCompare(va); }
+            if (sort === "hireDate")    { va = a.hireDate; vb = b.hireDate; return vb.localeCompare(va); }
+            if (sort === "hireDateAsc") { va = a.hireDate; vb = b.hireDate; return va.localeCompare(vb); }
+            return 0;
+          });
+
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+        document.getElementById("countBadge").textContent = filteredEmployees.length;
+      }
+
+      function sortBy(field) {
+        const s = document.getElementById("sortSelect");
+        if (sortField === field) {
+          sortDir = sortDir === "asc" ? "desc" : "asc";
+        } else {
+          sortField = field;
+          sortDir   = "asc";
+        }
+        applyFilters();
+      }
+
+      // ─── Render table ───
+      function renderTable() {
+        const tbody = document.getElementById("employeeTableBody");
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const page  = filteredEmployees.slice(start, start + PAGE_SIZE);
+
+        if (!page.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9">
+                <div class="table-empty">
+                  <div class="table-empty-icon">🔍</div>
+                  <div class="table-empty-text">Aucun résultat</div>
+                  <div class="table-empty-sub">Essayez de modifier vos critères de recherche</div>
+                </div>
+              </td>
+            </tr>`;
           return;
         }
 
-        employees.forEach((employee) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${employee.name}</td>
-            <td>${formatDate(employee.birthDate)}</td>
-            <td>${employee.position}</td>
-            <td>${formatDate(employee.hireDate)}</td>
-            <td>${employee.address}</td>
-            <td>${employee.contractType}</td>
-            <td>${employee.nationalId}</td>
-            <td>${employee.socialSecurity}</td>
-            <td>
-              <div class="action-buttons">
-                <button class="edit-btn" onclick="editEmployee('${
-                  employee.id
-                }')">Modifier</button>
-                <button class="delete-btn" onclick="deleteEmployee('${
-                  employee.id
-                }')">Supprimer</button>
-              </div>
-            </td>
-        `;
-          tbody.appendChild(row);
-        });
+        tbody.innerHTML = page.map(emp => {
+          const initials = emp.name.split(" ").map(w => w[0]).join("").substring(0,2).toUpperCase();
+          const contractBadge = emp.contractType === "CDI"
+            ? `<span class="badge badge-success">${emp.contractType}</span>`
+            : emp.contractType === "CDD"
+            ? `<span class="badge badge-warning">${emp.contractType}</span>`
+            : emp.contractType
+            ? `<span class="badge badge-gray">${emp.contractType}</span>`
+            : "—";
+
+          return `
+            <tr>
+              <td>
+                <div class="table-cell-name">
+                  <div class="table-avatar">${initials}</div>
+                  <div>
+                    <div class="table-name-text">${emp.name}</div>
+                  </div>
+                </div>
+              </td>
+              <td>${formatDate(emp.birthDate)}</td>
+              <td>${emp.position}</td>
+              <td>${formatDate(emp.hireDate)}</td>
+              <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${emp.address}">${emp.address || "—"}</td>
+              <td>${contractBadge}</td>
+              <td>${emp.nationalId || "—"}</td>
+              <td>${emp.socialSecurity || "—"}</td>
+              <td>
+                <div class="table-actions" style="justify-content:center;">
+                  <button class="btn btn-sm btn-ghost" onclick="editEmployee('${emp.id}')" title="Modifier">✏️</button>
+                  <button class="btn btn-sm btn-danger" onclick="confirmDelete('${emp.id}')" title="Supprimer">🗑</button>
+                </div>
+              </td>
+            </tr>`;
+        }).join("");
       }
 
-      // Format date for display
-      function formatDate(dateString) {
-        if (!dateString) return "";
-        const date = new Date(dateString);
-        return date.toLocaleDateString("fr-FR");
+      // ─── Pagination ───
+      function renderPagination() {
+        const total  = filteredEmployees.length;
+        const pages  = Math.ceil(total / PAGE_SIZE);
+        const start  = Math.min((currentPage - 1) * PAGE_SIZE + 1, total);
+        const end    = Math.min(currentPage * PAGE_SIZE, total);
+
+        document.getElementById("paginationInfo").textContent =
+          total > 0 ? `Affichage de ${start}–${end} sur ${total} employés` : "Aucun résultat";
+
+        const controls = document.getElementById("paginationControls");
+        if (pages <= 1) { controls.innerHTML = ""; return; }
+
+        let html = `<button class="page-btn" onclick="gotoPage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>‹</button>`;
+        for (let p = 1; p <= pages; p++) {
+          if (p === 1 || p === pages || Math.abs(p - currentPage) <= 1) {
+            html += `<button class="page-btn ${p === currentPage ? 'active' : ''}" onclick="gotoPage(${p})">${p}</button>`;
+          } else if (p === 2 || p === pages - 1) {
+            html += `<button class="page-btn" disabled>…</button>`;
+          }
+        }
+        html += `<button class="page-btn" onclick="gotoPage(${currentPage + 1})" ${currentPage === pages ? "disabled" : ""}>›</button>`;
+        controls.innerHTML = html;
       }
 
-      // Search employees
-      function searchEmployees() {
-        const searchTerm = document
-          .getElementById("searchInput")
-          .value.toLowerCase();
-        const filteredEmployees = employees.filter(
-          (employee) =>
-            employee.name.toLowerCase().includes(searchTerm) ||
-            employee.position.toLowerCase().includes(searchTerm)
-        );
-
-        const tbody = document.getElementById("employeeTableBody");
-        tbody.innerHTML = "";
-
-        filteredEmployees.forEach((employee) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${employee.name}</td>
-            <td>${formatDate(employee.birthDate)}</td>
-            <td>${employee.position}</td>
-            <td>${formatDate(employee.hireDate)}</td>
-            <td>
-              <div class="action-buttons">
-                <button class="edit-btn" onclick="editEmployee('${
-                  employee.id
-                }')">Modifier</button>
-                <button class="delete-btn" onclick="deleteEmployee('${
-                  employee.id
-                }')">Supprimer</button>
-              </div>
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
+      function gotoPage(p) {
+        const pages = Math.ceil(filteredEmployees.length / PAGE_SIZE);
+        if (p < 1 || p > pages) return;
+        currentPage = p;
+        renderTable();
+        renderPagination();
       }
 
-      // Modal functions
-      function openModal(employeeId = null) {
-        currentEmployeeId = employeeId;
-        const modal = document.getElementById("employeeModal");
-        const modalTitle = document.getElementById("modalTitle");
+      // ─── Modal ───
+      function openModal(id = null) {
+        currentEmployeeId = id;
         const form = document.getElementById("employeeForm");
+        form.reset();
 
-        if (employeeId) {
-          // Edit mode
-          modalTitle.textContent = "Modifier l'employé";
-          const employee = employees.find((emp) => emp.id === employeeId);
-          if (employee) {
-            document.getElementById("employeeName").value = employee.name || "";
-            document.getElementById("employeeBirthDate").value =
-              employee.birthDate || "";
-            document.getElementById("employeePosition").value =
-              employee.position || "";
-            document.getElementById("employeeHireDate").value =
-              employee.hireDate || "";
-            document.getElementById("employeeAddress").value =
-              employee.address || "";
-            document.getElementById("contractType").value =
-              employee.contractType || "";
-            document.getElementById("nationalId").value =
-              employee.nationalId || "";
-            document.getElementById("socialSecurity").value =
-              employee.socialSecurity || "";
+        if (id) {
+          const emp = employees.find(e => e.id === id);
+          document.getElementById("modalTitle").textContent = "Modifier l'employé";
+          if (emp) {
+            document.getElementById("employeeName").value     = emp.name;
+            document.getElementById("employeeBirthDate").value= emp.birthDate;
+            document.getElementById("employeePosition").value = emp.position;
+            document.getElementById("employeeHireDate").value = emp.hireDate;
+            document.getElementById("employeeAddress").value  = emp.address;
+            document.getElementById("contractType").value     = emp.contractType;
+            document.getElementById("nationalId").value       = emp.nationalId;
+            document.getElementById("socialSecurity").value   = emp.socialSecurity;
           }
         } else {
-          // Add mode
-          modalTitle.textContent = "Ajouter un employé";
-          form.reset();
+          document.getElementById("modalTitle").textContent = "Ajouter un employé";
         }
 
-        modal.style.display = "block";
+        document.getElementById("employeeModal").classList.add("active");
       }
 
       function closeModal() {
-        document.getElementById("employeeModal").style.display = "none";
-        currentEmployeeId = null;
-        document.getElementById("employeeForm").reset();
+        document.getElementById("employeeModal").classList.remove("active");
       }
 
-      // Handle form submission
-      document
-        .getElementById("employeeForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
+      // ─── Save ───
+      async function saveEmployee() {
+        const form   = document.getElementById("employeeForm");
+        const fields = Object.fromEntries(new FormData(form));
 
-          const formData = new FormData(e.target);
-          const employeeData = {
-            Name: formData.get("name"),
-            BirthDate: formData.get("birthDate"),
-            Position: formData.get("position"),
-            HireDate: formData.get("hireDate"),
-            Address: formData.get("address"),
-            "Contract type": formData.get("contractType"),
-            "National ID": formData.get("nationalId"),
-            "Social security number": formData.get("socialSecurity"),
-          };
-
-          try {
-            if (currentEmployeeId) {
-              // Update existing employee
-              await AirtableAPI.update(currentEmployeeId, employeeData);
-            } else {
-              // Create new employee
-              await AirtableAPI.create(employeeData);
-            }
-
-            closeModal();
-            await loadEmployees();
-          } catch (error) {
-            showError("Erreur lors de l'enregistrement: " + error.message);
-          }
-        });
-
-      // Edit employee
-      function editEmployee(employeeId) {
-        openModal(employeeId);
-      }
-
-      // Delete employee
-      async function deleteEmployee(employeeId) {
-        if (confirm("Êtes-vous sûr de vouloir supprimer cet employé ?")) {
-          try {
-            await AirtableAPI.delete(employeeId);
-            await loadEmployees();
-          } catch (error) {
-            showError("Erreur lors de la suppression: " + error.message);
-          }
+        if (!fields.Name || !fields.Position) {
+          showToast("Nom et poste sont obligatoires", "danger");
+          return;
         }
-      }
 
-      // Show error message
-      function showError(message) {
-        const errorDiv = document.getElementById("errorMessage");
-        errorDiv.textContent = message;
-        errorDiv.style.display = "block";
-      }
+        document.getElementById("loadingOverlay").classList.add("active");
+        document.getElementById("loadingText").textContent = currentEmployeeId ? "Mise à jour..." : "Enregistrement...";
 
-      // Toggle sidebar for mobile
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        sidebar.classList.toggle("active");
-      }
-
-      // Close modal when clicking outside
-      window.onclick = function (event) {
-        const modal = document.getElementById("employeeModal");
-        if (event.target === modal) {
+        try {
+          if (currentEmployeeId) {
+            await request(`${BASE_URL}/${currentEmployeeId}`, {
+              method: "PATCH",
+              body: JSON.stringify({ fields })
+            });
+            showToast("Employé mis à jour !", "success");
+          } else {
+            await request(BASE_URL, {
+              method: "POST",
+              body: JSON.stringify({ fields })
+            });
+            showToast("Employé ajouté !", "success");
+          }
           closeModal();
+          await loadEmployees();
+        } catch(e) {
+          showToast("Erreur : " + e.message, "danger");
+        } finally {
+          document.getElementById("loadingOverlay").classList.remove("active");
         }
-      };
+      }
 
-      // Initialize the app when the page loads
-      document.addEventListener("DOMContentLoaded", initializeApp);
+      function editEmployee(id) { openModal(id); }
+
+      // ─── Delete ───
+      function confirmDelete(id) {
+        const emp = employees.find(e => e.id === id);
+        document.getElementById("deleteEmpName").textContent = emp ? emp.name : "cet employé";
+        document.getElementById("deleteModal").classList.add("active");
+        document.getElementById("confirmDeleteBtn").onclick = () => doDelete(id);
+      }
+
+      async function doDelete(id) {
+        document.getElementById("deleteModal").classList.remove("active");
+        document.getElementById("loadingOverlay").classList.add("active");
+        document.getElementById("loadingText").textContent = "Suppression...";
+        try {
+          await request(`${BASE_URL}/${id}`, { method: "DELETE" });
+          showToast("Employé supprimé.", "success");
+          await loadEmployees();
+        } catch(e) {
+          showToast("Erreur : " + e.message, "danger");
+        } finally {
+          document.getElementById("loadingOverlay").classList.remove("active");
+        }
+      }
+
+      // ─── Helpers ───
+      function formatDate(ds) {
+        if (!ds) return "—";
+        return new Date(ds).toLocaleDateString("fr-FR");
+      }
+
+      function showToast(msg, type = "") {
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.textContent = msg;
+        document.getElementById("toastContainer").appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+      }
+
+      // ─── Sidebar ───
+      const sidebar       = document.getElementById("sidebar");
+      const collapseBtn   = document.getElementById("collapseBtn");
+      const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+      const overlay       = document.getElementById("sidebarOverlay");
+
+      collapseBtn.addEventListener("click", () => sidebar.classList.toggle("collapsed"));
+      mobileMenuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("mobile-open");
+        overlay.classList.toggle("active");
+      });
+      overlay.addEventListener("click", () => {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+      });
     </script>
   </body>
 </html>
