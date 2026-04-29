@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
     <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   </head>
   <body>
 
@@ -79,9 +80,14 @@
             <h1 class="page-header-title">Gestion des Employés</h1>
             <p class="page-header-subtitle">Consultez, ajoutez, modifiez et supprimez les employés de votre organisation.</p>
           </div>
-          <button class="btn btn-primary btn-lg" onclick="openModal()">
-            ＋ Ajouter un employé
-          </button>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-secondary btn-lg" onclick="openBulkModal()">
+              📥 Importer Excel
+            </button>
+            <button class="btn btn-primary btn-lg" onclick="openModal()">
+              ＋ Ajouter un employé
+            </button>
+          </div>
         </div>
 
         <!-- Stats row -->
@@ -223,13 +229,13 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="employeePosition">Poste <span>*</span></label>
-                <input class="form-control" type="text" id="employeePosition" name="Position" placeholder="Ex: Responsable logistique" required />
+                <label class="form-label" for="employeePosition">Poste</label>
+                <input class="form-control" type="text" id="employeePosition" name="Position" placeholder="Ex: Responsable logistique" />
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="employeeHireDate">Date d'embauche <span>*</span></label>
-                <input class="form-control" type="date" id="employeeHireDate" name="HireDate" required />
+                <label class="form-label" for="employeeHireDate">Date d'embauche</label>
+                <input class="form-control" type="date" id="employeeHireDate" name="HireDate" />
               </div>
 
               <div class="form-group col-span-full">
@@ -268,6 +274,36 @@
           </button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ═══════════ BULK EMPLOYEE MODAL ═══════════ -->
+    <div class="modal-overlay" id="bulkModal">
+      <div class="modal-box" style="max-width:480px;">
+        <div class="modal-header">
+          <div class="modal-header-title">Importer des employés</div>
+          <div class="modal-header-sub">Sélectionnez un fichier Excel (.xlsx, .xls)</div>
+          <button class="modal-close-btn" onclick="closeBulkModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="info-box info" style="display:flex; gap:12px; align-items:center; background-color:var(--gray-50); padding:12px; border-radius:8px; margin-bottom:16px;">
+            <div style="font-size:24px;">ℹ️</div>
+            <div>
+              <div style="font-weight:600; color:var(--gray-800);">Format requis</div>
+              <div style="font-size:13px; color:var(--gray-600);">Le fichier doit contenir 3 colonnes dans l'ordre : <strong>Nom complet</strong>, <strong>Date d'embauche</strong>, <strong>Poste</strong>.</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label" for="bulkFile">Fichier Excel <span>*</span></label>
+            <input class="form-control" type="file" id="bulkFile" accept=".xlsx, .xls" style="padding: 8px 12px;" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeBulkModal()">Annuler</button>
+          <button class="btn btn-primary" id="bulkSaveBtn" onclick="processBulkExcel()">
+            📥 Importer
+          </button>
+        </div>
       </div>
     </div>
 
@@ -534,13 +570,129 @@
         document.getElementById("employeeModal").classList.remove("active");
       }
 
+      function openBulkModal() {
+        document.getElementById("bulkFile").value = "";
+        document.getElementById("bulkModal").classList.add("active");
+      }
+
+      function closeBulkModal() {
+        document.getElementById("bulkModal").classList.remove("active");
+      }
+
+      async function processBulkExcel() {
+        const fileInput = document.getElementById("bulkFile");
+        if (!fileInput.files || fileInput.files.length === 0) {
+          showToast("Veuillez sélectionner un fichier Excel", "danger");
+          return;
+        }
+
+        const file = fileInput.files[0];
+        document.getElementById("loadingOverlay").classList.add("active");
+        document.getElementById("loadingText").textContent = "Importation en cours...";
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            if (!json || json.length === 0) {
+              throw new Error("Le fichier est vide");
+            }
+
+            // Detect if first row is header
+            let startIdx = 0;
+            const firstRowStr = json[0].join(" ").toLowerCase();
+            if (firstRowStr.includes("nom") || firstRowStr.includes("name") || firstRowStr.includes("poste") || firstRowStr.includes("titre") || firstRowStr.includes("date")) {
+              startIdx = 1;
+            }
+
+            const recordsToCreate = [];
+            for (let i = startIdx; i < json.length; i++) {
+              const row = json[i];
+              if (!row || row.length === 0) continue;
+
+              const name = row[0] ? String(row[0]).trim() : "";
+              if (!name) continue;
+
+              let hireDate = "";
+              if (row[1]) {
+                if (row[1] instanceof Date) {
+                  const year = row[1].getUTCFullYear();
+                  const month = String(row[1].getUTCMonth() + 1).padStart(2, '0');
+                  const day = String(row[1].getUTCDate()).padStart(2, '0');
+                  hireDate = `${year}-${month}-${day}`;
+                } else if (typeof row[1] === 'number') {
+                  const dateObj = new Date((row[1] - 25569) * 86400 * 1000);
+                  const year = dateObj.getUTCFullYear();
+                  const month = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+                  const day = String(dateObj.getUTCDate()).padStart(2, '0');
+                  hireDate = `${year}-${month}-${day}`;
+                } else {
+                  const parsed = new Date(row[1]);
+                  if (!isNaN(parsed.getTime())) {
+                    const year = parsed.getUTCFullYear();
+                    const month = String(parsed.getUTCMonth() + 1).padStart(2, '0');
+                    const day = String(parsed.getUTCDate()).padStart(2, '0');
+                    hireDate = `${year}-${month}-${day}`;
+                  }
+                }
+              }
+
+              const position = row[2] ? String(row[2]).trim() : "Poste non spécifié";
+
+              recordsToCreate.push({
+                fields: {
+                  "Name": name,
+                  "HireDate": hireDate,
+                  "Position": position,
+                  "Contract type": "CDI"
+                }
+              });
+            }
+
+            if (recordsToCreate.length === 0) {
+              throw new Error("Aucune donnée d'employé valide trouvée");
+            }
+
+            const chunks = [];
+            for (let i = 0; i < recordsToCreate.length; i += 10) {
+              chunks.push(recordsToCreate.slice(i, i + 10));
+            }
+
+            let successCount = 0;
+            for (const chunk of chunks) {
+              await request(BASE_URL, {
+                method: "POST",
+                body: JSON.stringify({ records: chunk })
+              });
+              successCount += chunk.length;
+            }
+
+            closeBulkModal();
+            showToast(`${successCount} employés importés avec succès !`, "success");
+            await loadEmployees();
+
+          } catch(err) {
+            showToast("Erreur d'import : " + err.message, "danger");
+          } finally {
+            document.getElementById("loadingOverlay").classList.remove("active");
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+      }
+
       // ─── Save ───
       async function saveEmployee() {
         const form   = document.getElementById("employeeForm");
         const fields = Object.fromEntries(new FormData(form));
 
-        if (!fields.Name || !fields.Position) {
-          showToast("Nom et poste sont obligatoires", "danger");
+        if (!fields.Name) {
+          showToast("Le nom est obligatoire", "danger");
           return;
         }
 
