@@ -83,7 +83,7 @@
         <!-- Page header -->
         <div class="page-header">
           <h1 class="page-header-title">Gestion des Attestations</h1>
-          <p class="page-header-subtitle">Générez des attestations de travail, de congé ou de salaire pour vos employés.</p>
+          <p class="page-header-subtitle">Générez des attestations de travail, de congé, de salaire ou de stage pour vos employés.</p>
         </div>
 
         <!-- Stats row -->
@@ -98,7 +98,7 @@
           <div class="stat-card">
             <div class="stat-icon success">✅</div>
             <div class="stat-body">
-              <div class="stat-value">3</div>
+              <div class="stat-value">4</div>
               <div class="stat-label">Types d'attestations</div>
             </div>
           </div>
@@ -143,6 +143,14 @@
                 <div class="cert-card-icon">💰</div>
                 <div class="cert-card-title">Attestation de Salaire</div>
                 <div class="cert-card-desc">Justifie le salaire mensuel perçu par un employé pour toute démarche administrative.</div>
+              </div>
+
+              <!-- Stage -->
+              <div class="cert-card" id="card-stage" onclick="selectType('stage')">
+                <div class="cert-check">✓</div>
+                <div class="cert-card-icon">🎓</div>
+                <div class="cert-card-title">Attestation de Stage</div>
+                <div class="cert-card-desc">Certifie la période de stage effectuée au sein de la société avec les dates et le service concerné.</div>
               </div>
 
             </div>
@@ -270,7 +278,8 @@
       const TYPE_LABELS = {
         travail: "Attestation de Travail",
         conge:   "Attestation de Congé",
-        salaire: "Attestation de Salaire"
+        salaire: "Attestation de Salaire",
+        stage:   "Attestation de Stage"
       };
 
       // ─── Select certificate type ───
@@ -372,6 +381,23 @@
                 value="${selectedEmployee ? selectedEmployee.monthlySalary || '' : ''}" required />
               <p style="font-size:12px;color:var(--gray-400);margin-top:6px;">Les autres informations sont récupérées automatiquement.</p>
             </div>`;
+        } else if (selectedCertificateType === "stage") {
+          fc.innerHTML = `
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label" for="internshipStartDate">Date de début du stage <span>*</span></label>
+                <input class="form-control" type="date" id="internshipStartDate" name="internshipStartDate" required />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="internshipEndDate">Date de fin du stage <span>*</span></label>
+                <input class="form-control" type="date" id="internshipEndDate" name="internshipEndDate" required />
+              </div>
+              <div class="form-group col-span-full">
+                <label class="form-label" for="internshipDepartment">Service / sujet du stage</label>
+                <input class="form-control" type="text" id="internshipDepartment" name="internshipDepartment"
+                  placeholder="Ex: Transit et douane" />
+              </div>
+            </div>`;
         }
       }
 
@@ -388,6 +414,10 @@
       // ─── Generate certificate ───
       async function generateCertificate() {
         const form     = document.getElementById("certificateForm");
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
         const formData = Object.fromEntries(new FormData(form));
         document.getElementById("loadingOverlay").classList.add("active");
         try {
@@ -404,7 +434,7 @@
 
       // ─── Generate PDF ───
       async function generatePDF(type, formData) {
-        const pdfBase64 = TEMPLATE_PDF_BASE64[type];
+        const pdfBase64 = TEMPLATE_PDF_BASE64[type] || (type === "stage" ? (TEMPLATE_PDF_BASE64.travail || TEMPLATE_PDF_BASE64.conge) : null);
         if (!pdfBase64) throw new Error("Template PDF manquant pour : " + type);
 
         const pdfBytes  = Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0));
@@ -530,6 +560,22 @@
           ], LEFT, Y, SIZE, MAX_W);
 
         // ────────────────────────────────────────────────────────────────────
+        } else if (type === "stage") {
+          const Y = height - 619;
+          const MAX_W = width - LEFT - 60;
+          const department = formData.internshipDepartment ? String(formData.internshipDepartment).trim() : "";
+
+          drawWrappedSegments([
+            { text: "A effectu\u00E9 un stage au sein de notre soci\u00E9t\u00E9", bold: false },
+            { text: department ? " au service " : "", bold: false },
+            { text: department, bold: true },
+            { text: " du ", bold: false },
+            { text: formatLongDate(formData.internshipStartDate), bold: true },
+            { text: " au ", bold: false },
+            { text: formatLongDate(formData.internshipEndDate), bold: true },
+            { text: ". La pr\u00E9sente attestation est d\u00E9livr\u00E9e \u00E0 l'int\u00E9ress\u00E9(e) pour servir et valoir ce que de droit.", bold: false },
+          ], LEFT, Y, SIZE, MAX_W);
+
         } else if (type === "travail") {
           const Y = height - 619;
           const MAX_W = width - LEFT - 60; // right margin of ~60pt
