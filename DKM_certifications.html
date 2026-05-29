@@ -513,7 +513,9 @@
         firstPage.drawText(formatDate(selectedEmployee.birthDate), { x: 280, y: height - 470, size: SZ, font: fReg,  color: black });
         firstPage.drawText(selectedEmployee.address,               { x: 280, y: height - 498, size: SZ, font: fReg,  color: black });
         firstPage.drawText(selectedEmployee.nationalId,            { x: 280, y: height - 526, size: SZ, font: fReg,  color: black });
-        firstPage.drawText(selectedEmployee.socialSecurity,        { x: 280, y: height - 554, size: SZ, font: fReg,  color: black });
+        if (type !== "stage") {
+          firstPage.drawText(selectedEmployee.socialSecurity,      { x: 280, y: height - 554, size: SZ, font: fReg,  color: black });
+        }
         firstPage.drawText(formatDate(today),                      { x: 490, y: height - 765, size: SZ, font: fReg,  color: black });
 
         // ── Certificate-specific last section ────────────────────────────────
