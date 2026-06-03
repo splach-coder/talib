@@ -471,6 +471,7 @@
           let lineX = startX;
           let lineY = startY;
           let lineWords = [];
+          const lineStep = size * 2.0; // extra breathing room so wrapped lines do not overlap
 
           function flushLine() {
             let cx = startX;
@@ -482,7 +483,7 @@
             }
             lineWords = [];
             lineX = startX;
-            lineY -= size * 1.6; // line-height
+            lineY -= lineStep;
           }
 
           for (const w of words) {
@@ -497,7 +498,7 @@
             lineX += ww;
           }
           if (lineWords.some(w => w.text.trim())) flushLine();
-          return lineY + size * 1.6; // return y of last written line
+          return lineY + lineStep; // return y of last written line
         }
 
         // ── Common upper fields (unchanged across all types) ─────────────────
