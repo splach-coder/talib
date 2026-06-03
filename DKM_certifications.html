@@ -433,7 +433,17 @@
         if (!pdfBase64) throw new Error("Template PDF manquant pour : " + type);
 
         const pdfBytes  = Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0));
-        const pdfDoc    = await PDFLib.PDFDocument.load(pdfBytes);
+        let pdfDoc;
+        try {
+          pdfDoc = await PDFLib.PDFDocument.load(pdfBytes);
+        } catch (err) {
+          const msg = String(err && err.message ? err.message : err);
+          if (msg.includes("encrypted")) {
+            pdfDoc = await PDFLib.PDFDocument.load(pdfBytes, { ignoreEncryption: true });
+          } else {
+            throw err;
+          }
+        }
         const firstPage = pdfDoc.getPages()[0];
         const { width, height } = firstPage.getSize();
 
